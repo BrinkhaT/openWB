@@ -146,6 +146,7 @@ class plenticore_inverter:
         self.P_Home_Cons_Grid = 0
         self.P_Home_Cons_Bat = 0
         self.Total_yield = 0
+        self.Daily_yield = 0
         self.Yearly_yield = 0
         self.Monthly_yield = 0
 
@@ -233,6 +234,9 @@ class plenticore(modbus):
             # Plenticore Register 320: Total_yield [Wh]
             # ist PV Gesamtertrag
             self.attr_WR.Total_yield = int(self.ReadFloat32(320))
+            # Plenticore Register 322: Daily_yield [Wh]
+            # ist PV Tagesertrag
+            self.attr_WR.Daily_yield = round((self.ReadFloat32(322)/1000), 2)
             # Plenticore Register 324: Yearly_yield [Wh]
             # ist PV Jahresertrag
             self.attr_WR.Yearly_yield = round((self.ReadFloat32(324)/1000), 2)
@@ -391,6 +395,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
     # Summenwerte
     PV_power_total = 0
     Total_yield = 0
+    Daily_yield = 0
     Yearly_yield = 0
     Monthly_yield = 0
     WR1 = None
@@ -433,6 +438,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
     PV_power_total = WR1.attr_WR.P_PV_AC_total
     log.debug("WR1 Leistung = " + str(WR1.attr_WR.P_PV_AC_total) + "PV_total = " + str(PV_power_total))
     Total_yield = WR1.attr_WR.Total_yield
+    Daily_yield = WR1.attr_WR.Daily_yield
     Monthly_yield = WR1.attr_WR.Monthly_yield
     Yearly_yield = WR1.attr_WR.Yearly_yield
 
@@ -444,6 +450,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
                   "PV_total = " + str(PV_power_total))
         # Summen der Erträge bestimmen
         Total_yield += WR2.attr_WR.Total_yield
+        Daily_yield += WR2.attr_WR.Daily_yield
         Monthly_yield += WR2.attr_WR.Monthly_yield
         Yearly_yield += WR2.attr_WR.Yearly_yield
 
@@ -455,6 +462,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
                   "PV_total = " + str(PV_power_total))
         # Summen der Erträge bestimmen
         Total_yield += WR3.attr_WR.Total_yield
+        Daily_yield += WR3.attr_WR.Daily_yield
         Monthly_yield += WR3.attr_WR.Monthly_yield
         Yearly_yield += WR3.attr_WR.Yearly_yield
 
@@ -466,6 +474,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
                   "PV_total = " + str(PV_power_total))
         # Summen der Erträge bestimmen
         Total_yield += WR4.attr_WR.Total_yield
+        Daily_yield += WR4.attr_WR.Daily_yield
         Monthly_yield += WR4.attr_WR.Monthly_yield
         Yearly_yield += WR4.attr_WR.Yearly_yield
 
@@ -477,6 +486,7 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
                   "PV_total = " + str(PV_power_total))
         # Summen der Erträge bestimmen
         Total_yield += WR5.attr_WR.Total_yield
+        Daily_yield += WR5.attr_WR.Daily_yield
         Monthly_yield += WR5.attr_WR.Monthly_yield
         Yearly_yield += WR5.attr_WR.Yearly_yield
 
@@ -519,6 +529,9 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
     # Gesamtertrag in Kilowattstunden
     with open('/var/www/html/openWB/ramdisk/pvkwhk', 'w') as f:
         f.write(str(Total_yield / 1000))
+    # Tagesertrag in Kilowattstunden
+    with open('/var/www/html/openWB/ramdisk/daily_pvkwhk', 'w') as f:
+        f.write(str(Daily_yield))
     # Jahresertrag in Kilowattstunden
     with open('/var/www/html/openWB/ramdisk/yearly_pvkwhk', 'w') as f:
         f.write(str(Yearly_yield))
@@ -539,6 +552,9 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
     # Gesamtertrag in Kilowattstunden
     with open('/var/www/html/openWB/ramdisk/pvkwhk1', 'w') as f:
         f.write(str(WR1.attr_WR.Total_yield / 1000))
+    # Tagesertrag in Kilowattstunden
+    with open('/var/www/html/openWB/ramdisk/daily_pvkwhk1', 'w') as f:
+        f.write(str(WR1.attr_WR.Daily_yield))
     # Jahresertrag in Kilowattstunden
     with open('/var/www/html/openWB/ramdisk/yearly_pvkwhk1', 'w') as f:
         f.write(str(WR1.attr_WR.Yearly_yield))
@@ -557,6 +573,9 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
         # Gesamtertrag in Kilowattstunden
         with open('/var/www/html/openWB/ramdisk/pvkwhk2', 'w') as f:
             f.write(str(WR2.attr_WR.Total_yield / 1000))
+        # Tagesertrag in Kilowattstunden
+        with open('/var/www/html/openWB/ramdisk/daily_pvkwhk2', 'w') as f:
+            f.write(str(WR2.attr_WR.Daily_yield))
         # Jahresertrag in Kilowattstunden
         with open('/var/www/html/openWB/ramdisk/yearly_pvkwhk2', 'w') as f:
             f.write(str(WR2.attr_WR.Yearly_yield))
@@ -575,6 +594,9 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
         # Gesamtertrag in Kilowattstunden
         with open('/var/www/html/openWB/ramdisk/pvkwhk3', 'w') as f:
             f.write(str(WR3.attr_WR.Total_yield / 1000))
+        # Tagesertrag in Kilowattstunden
+        with open('/var/www/html/openWB/ramdisk/daily_pvkwhk3', 'w') as f:
+            f.write(str(WR3.attr_WR.Daily_yield))
         # Jahresertrag in Kilowattstunden
         with open('/var/www/html/openWB/ramdisk/yearly_pvkwhk3', 'w') as f:
             f.write(str(WR3.attr_WR.Yearly_yield))
