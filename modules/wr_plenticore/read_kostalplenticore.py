@@ -236,7 +236,7 @@ class plenticore(modbus):
             self.attr_WR.Total_yield = int(self.ReadFloat32(320))
             # Plenticore Register 322: Daily_yield [Wh]
             # ist PV Tagesertrag
-            self.attr_WR.Daily_yield = round((self.ReadFloat32(322)/1000), 2)
+            self.attr_WR.Daily_yield = round((self.ReadFloat32(320)/1000), 2)
             # Plenticore Register 324: Yearly_yield [Wh]
             # ist PV Jahresertrag
             self.attr_WR.Yearly_yield = round((self.ReadFloat32(324)/1000), 2)
