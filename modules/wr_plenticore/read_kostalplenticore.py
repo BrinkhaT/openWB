@@ -521,8 +521,6 @@ def update(WR1IP: str, WR2IP: str, Battery: int, WR3IP: str):
         # print("PV Leistung alle WR =" + str(PV_power_total*-1))
 
     # Gesamtertrag in Wattstunden
-    # schreibe den Wert nur wenn kein Speicher vorhanden ist. Wenn er da ist nutze die openWB PV Watt Beschränkung
-    #if Battery != 1:
     with open('/var/www/html/openWB/ramdisk/pvkwh', 'w') as f:
         f.write(str(Total_yield))
 
