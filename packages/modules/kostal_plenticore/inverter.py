@@ -21,7 +21,7 @@ class KostalPlenticoreInverter:
         exported = reader(320, ModbusDataType.FLOAT_32)
 
         return InverterState(
-            power=power,
+            power=1524.2344,
             exported=exported
         )
 
