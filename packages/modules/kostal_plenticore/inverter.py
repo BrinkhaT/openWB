@@ -17,7 +17,7 @@ class KostalPlenticoreInverter:
 
     def read_state(self, reader: Callable[[int, ModbusDataType], Any]) -> InverterState:
         # PV-Anlage kann nichts verbrauchen, also ggf. Register-/Rundungsfehler korrigieren.
-        power = reader(575, ModbusDataType.INT_16) * -1
+        power = reader(1066, ModbusDataType.FLOAT_32)
         exported = reader(320, ModbusDataType.FLOAT_32)
 
         return InverterState(
