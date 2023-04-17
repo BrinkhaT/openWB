@@ -19,11 +19,24 @@ class KostalPlenticoreCounter:
         self.component_info = ComponentInfo.from_component_config(self.component_config)
 
     def get_values(self, reader: Callable[[int, ModbusDataType], Any]) -> CounterState:
+        # Actual cos φ
         power_factor = reader(150, ModbusDataType.FLOAT_32)
+
+        # Current phase 1/2/3 (powermeter) in A
         currents = [reader(register, ModbusDataType.FLOAT_32) for register in [222, 232, 242]]
+
+        # Voltage phase 1/2/3 (powermeter) in V
         voltages = [reader(register, ModbusDataType.FLOAT_32) for register in [230, 240, 250]]
+
+        # Active power phase 1/2/3 (powermeter) in W
         powers = [reader(register, ModbusDataType.FLOAT_32) for register in [224, 234, 244]]
+
+        # Total active power (powermeter) in W
+        # Sensor position 1 (home consumption): (+) House consumption, (-) generation
+        # Sensor position 2 (grid connection): (+) Power supply, (-) feed-in
         power = reader(252, ModbusDataType.FLOAT_32)
+
+        # Frequency (powermeter) in Hz
         frequency = reader(220, ModbusDataType.FLOAT_32)
         imported, exported = self.sim_counter.sim_count(power)
 
